@@ -1,5 +1,21 @@
+const requireEnv =[
+    "DB_HOST" , 
+    "DB_USER",
+    "DB_PASSWORD",
+    "DB_NAME"
+
+
+];
+
+for(const variable of requireEnv){
+    if(!process.env[variable]){
+        throw new Error(`${variable} is missing from .env`);
+    }
+}
+   
+
+
 const mysql = require("mysql2");
-require("dotenv").config();
 
 
 const pool = mysql.createPool({

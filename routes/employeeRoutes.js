@@ -1,7 +1,16 @@
 const express = require("express");
 const validateEmployee = require("../middleware/validateEmployee");
 const validateEmployeeUpdate = require("../middleware/validateEmployeeUpdate");
-const {createEmployee,getEmployees, getEmployeeID, updateEmployee, deleteEmployee}= require("../controllers/employeeController");
+const {
+    createEmployee,
+    getEmployees,
+    getEmployeeID, 
+    updateEmployee, 
+    deleteEmployee
+}= require("../controllers/employeeController");
+
+const authenticateToken = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/authorizeRole");
 const db = require("../config/db");
 
 
@@ -9,20 +18,30 @@ const db = require("../config/db");
 const router = express.Router();
 
 //get all employees
-router.get("/", getEmployees);
-
+router.get("/",authenticateToken, getEmployees);
 
 
 // get one employee
 router.get("/:id" , getEmployeeID);
 
 
-router.post("/",validateEmployee, createEmployee);
+router.post("/", authenticateToken,
+    authorizeRole("admin"),
+    validateEmployee,
+    createEmployee
+);
 
 
-router.patch("/:id",validateEmployeeUpdate, updateEmployee);
+router.patch("/:id",
+    authenticateToken,
+    authorizeRole("admin"),
+    validateEmployeeUpdate,
+    updateEmployee);
 
-router.delete("/:id", deleteEmployee);
+router.delete("/:id",
+    authenticateToken,
+    authorizeRole("admin"), 
+    deleteEmployee);
 
  
 
